@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Dub & SRT Studio - Pro Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        studio: {
+                            bg: '#09090f',
+                            card: '#12131f',
+                            border: '#23253a',
+                            accent: '#6366f1',
+                            neon: '#a855f7',
+                            cyan: '#06b6d4'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #09090f;
+            color: #f8fafc;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.13) 0%, transparent 40%),
+                radial-gradient(circle at 85% 90%, rgba(168, 85, 247, 0.13) 0%, transparent 40%);
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(18, 19, 31, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .neon-glow {
+            box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25), 0 0 15px -5px rgba(168, 85, 247, 0.2);
+        }
+        .tiktok-subtitle-preview {
+            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0px 2px 4px rgba(0,0,0,0.8);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #23253a;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-indigo-500 selection:text-white flex flex-col">
+
+    <!-- Header & Navigasi Tab -->
+    <header class="border-b border-white/10 bg-[#09090f]/85 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center justify-between w-full md:w-auto">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <i data-lucide="wand-2" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base sm:text-lg tracking-tight bg-gradient-to-r from-white via-indigo-200 to-purple-200 bg-clip-text text-transparent">
+                            Anime Creator Studio <span class="text-xs font-mono text-cyan-400 px-2 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30">Pro</span>
+                        </h1>
+                        <p class="text-[11px] text-slate-400 hidden lg:block">Multi-Voice Dubbing, TikTok Subtitle Style, VS Prompt & Viral Titles</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Switcher dengan Menu Video Prompt Baru -->
+            <nav class="flex items-center p-1 rounded-xl bg-slate-900/90 border border-white/10 w-full md:w-auto gap-1 overflow-x-auto">
+                <button type="button" id="tabBtnDub" onclick="switchTab('dub')"
+                    class="px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md whitespace-nowrap">
+                    <i data-lucide="languages" class="w-3.5 h-3.5"></i>
+                    <span>Dub & SRT</span>
+                </button>
+                <button type="button" id="tabBtnVs" onclick="switchTab('vs')"
+                    class="px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white whitespace-nowrap">
+                    <i data-lucide="swords" class="w-3.5 h-3.5"></i>
+                    <span>VS Setup</span>
+                </button>
+                <button type="button" id="tabBtnVideoPrompt" onclick="switchTab('videoPrompt')"
+                    class="px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white whitespace-nowrap">
+                    <i data-lucide="video" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>AI Video Prompt</span>
+                </button>
+                <button type="button" id="tabBtnViral" onclick="switchTab('viral')"
+                    class="px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white whitespace-nowrap">
+                    <i data-lucide="flame" class="w-3.5 h-3.5 text-rose-400"></i>
+                    <span>Judul Viral</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+        <!-- Global Status Banner -->
+        <div id="statusBanner" class="hidden mb-6 rounded-xl p-3.5 text-sm flex items-center justify-between gap-3 transition-all duration-300">
+            <div class="flex items-center gap-2.5">
+                <i id="statusIcon" data-lucide="info" class="w-5 h-5 shrink-0"></i>
+                <span id="statusText" class="font-medium"></span>
+            </div>
+            <button type="button" onclick="hideStatus()" class="p-1 hover:bg-white/10 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- TAB 1: DUBBING & MULTI-VOICE SRT STUDIO                     -->
+        <!-- ========================================================= -->
+        <section id="panelDub" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- Kolom Kiri: Video & Pengaturan Multi-Voice / Subtitle Style -->
+                <div class="lg:col-span-5 space-y-5">
+                    
+                    <!-- Card 1: Upload Video -->
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                                <i data-lucide="film" class="w-4 h-4 text-cyan-400"></i>
+                                1. Unggah Video Anime Jepang
+                            </h2>
+                            <button id="btnResetVideo" type="button" onclick="resetVideoWorkspace()" class="hidden text-xs font-medium text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 px-2.5 py-1 rounded-lg transition-all flex items-center gap-1">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Ganti
+                            </button>
+                        </div>
+
+                        <div id="videoDropzone" class="relative group cursor-pointer rounded-xl border-2 border-dashed border-slate-700 hover:border-indigo-500/70 bg-slate-900/50 transition-all duration-200 overflow-hidden min-h-[200px] flex flex-col items-center justify-center p-4 text-center">
+                            <input type="file" id="videoFileInput" accept="video/mp4,video/webm,video/quicktime,video/*" class="hidden">
+                            <div id="videoUploadPlaceholder" class="flex flex-col items-center max-w-xs mx-auto">
+                                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-all">
+                                    <i data-lucide="video" class="w-6 h-6 text-indigo-400"></i>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-200 mb-1">Tarik & lepas video anime</p>
+                                <p class="text-xs text-slate-400 mb-3">MP4, WebM, MOV (&lt; 25 MB disarankan)</p>
+                                <span class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/25">Pilih File</span>
+                            </div>
+                            <div id="videoPreviewWrapper" class="hidden w-full space-y-2" onclick="event.stopPropagation()">
+                                <video id="videoPlayer" controls playsinline class="w-full max-h-[220px] rounded-lg bg-black border border-white/10 shadow-lg"></video>
+                                <span id="videoFileName" class="text-xs font-medium text-slate-300 truncate block">video.mp4</span>
+                            </div>
+                        </div>
+
+                        <!-- Opsi Subtitle Style & Voice Mapping -->
+                        <div class="mt-4 space-y-3">
+                            <div>
+                                <label for="dubStyleSelect" class="block text-xs font-medium text-slate-400 mb-1">Gaya Terjemahan</label>
+                                <select id="dubStyleSelect" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none">
+                                    <option value="natural">Dubbing Anime Natural (Ekspresif & Santai)</option>
+                                    <option value="dramatic">Shonen / Pertarungan Epik (Tegas & Bersemangat)</option>
+                                    <option value="formal">Baku / Narasi Resmi</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-1">Gaya Subtitle Visual</label>
+                                    <select id="subStyleVisual" onchange="updateSubPreviewStyle()" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-slate-200 outline-none">
+                                        <option value="tiktok">Kuning Neon TikTok</option>
+                                        <option value="cyan">Cyan Gaming Reels</option>
+                                        <option value="white">Putih Klasik Bersih</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-1">Suara Karakter Utama</label>
+                                    <select id="defaultVoiceSelect" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-slate-200 outline-none">
+                                        <option value="Fenrir">Fenrir (Tegas/Cowok)</option>
+                                        <option value="Puck">Puck (Energik/Shonen)</option>
+                                        <option value="Zephyr" selected>Zephyr (Cerah/Heroine)</option>
+                                        <option value="Kore">Kore (Berwibawa)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="button" id="btnTranslateVideo" onclick="processVideoTranslation()" disabled
+                                class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span>Transkripsi & Terjemahkan Video</span>
+                            </button>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div id="videoProgressBox" class="hidden mt-3 p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 space-y-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-4 h-4 rounded-full border-2 border-t-cyan-400 border-indigo-500/20 animate-spin shrink-0"></div>
+                                <p id="videoProgressStep" class="text-xs font-semibold text-cyan-300">Membaca video...</p>
+                            </div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                <div id="videoProgressBar" class="bg-gradient-to-r from-cyan-400 to-purple-500 h-full w-1/3 transition-all"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Studio Audio Dubbing -->
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl neon-glow border-purple-500/25">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-semibold text-white flex items-center gap-2">
+                                <i data-lucide="volume-2" class="w-4 h-4 text-purple-400"></i>
+                                3. Studio Multi-Voice TTS (.WAV)
+                            </h2>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300">WAV HD</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-3">
+                            Setiap baris subtitle dapat di-assign suara berbeda (Multi-Voice) atau buat dubbing keseluruhan sekaligus.
+                        </p>
+
+                        <button type="button" id="btnGenerateFullDub" onclick="generateFullDubbingAudio()" disabled
+                            class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm shadow-lg shadow-purple-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <i data-lucide="mic" class="w-4 h-4"></i>
+                            <span>Buat Suara Dubbing Lengkap</span>
+                        </button>
+
+                        <div id="ttsLoadingBox" class="hidden mt-3 p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 flex items-center gap-3">
+                            <div class="w-4 h-4 rounded-full border-2 border-t-purple-400 border-purple-500/20 animate-spin shrink-0"></div>
+                            <span id="ttsLoadingText" class="text-xs font-medium text-purple-200">Meracik audio dubbing...</span>
+                        </div>
+
+                        <div id="dubAudioResultBox" class="hidden mt-4 p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/30 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span id="dubAudioLabel" class="text-xs font-semibold text-emerald-300 flex items-center gap-1.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4"></i> Suara Dubbing Siap!
+                                </span>
+                            </div>
+                            <audio id="dubAudioPlayer" controls class="w-full h-10 rounded-lg"></audio>
+                            <a id="btnDownloadAudio" href="#" download="dubbing_indonesia.wav"
+                                class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs text-center block shadow-lg">
+                                Download Suara Dubbing (.WAV)
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Kolom Kanan: Editor Subtitle & Live Preview -->
+                <div class="lg:col-span-7 space-y-5">
+                    
+                    <!-- Live Subtitle Preview Box (TikTok Style) -->
+                    <div id="liveSubtitlePreviewCard" class="glass-panel rounded-2xl p-4 shadow-xl border-amber-500/30 flex flex-col items-center justify-center min-h-[90px] text-center relative overflow-hidden bg-gradient-to-b from-slate-900 to-[#12131f]">
+                        <span class="absolute top-2 left-3 text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Live TikTok Subtitle Preview</span>
+                        <p id="liveSubtitleText" class="tiktok-subtitle-preview text-lg sm:text-xl font-black text-amber-300 tracking-wide mt-3 px-4">
+                            "Ayo maju! Mulai dari sini pertarungan sesungguhnya!"
+                        </p>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col min-h-[480px]">
+                        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10">
+                            <div>
+                                <h2 class="text-sm sm:text-base font-semibold text-white flex items-center gap-2">
+                                    <i data-lucide="captions" class="w-4 h-4 text-indigo-400"></i>
+                                    2. Editor Multi-Voice Subtitle SRT
+                                </h2>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Pilih pengisi suara unik untuk setiap karakter di tiap baris</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="addSubtitleBlock()"
+                                    class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition-all flex items-center gap-1">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Baris
+                                </button>
+                                <button type="button" id="btnDownloadSrt" onclick="downloadSrtFile()" disabled
+                                    class="px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-white text-xs font-semibold shadow-lg transition-all flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="file-down" class="w-4 h-4"></i> Download .SRT
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="subtitleListContainer" class="flex-1 py-4 space-y-3 max-h-[520px] overflow-y-auto pr-1">
+                            <div id="subtitleEmptyState" class="h-full min-h-[320px] flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-800 rounded-xl bg-slate-900/30">
+                                <div class="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center mb-3 text-slate-400">
+                                    <i data-lucide="subtitles" class="w-6 h-6"></i>
+                                </div>
+                                <h3 class="text-sm font-semibold text-slate-300 mb-1">Belum Ada Subtitle</h3>
+                                <p class="text-xs text-slate-500 max-w-sm mb-4">
+                                    Unggah video anime di sebelah kiri atau klik contoh di bawah untuk mencoba fitur multi-voice dubbing & subtitle TikTok.
+                                </p>
+                                <button type="button" onclick="loadSampleSubtitles()" class="text-xs text-indigo-400 hover:underline">
+                                    Muat Contoh Subtitle Multi-Voice
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+                            <span id="subtitleCountLabel">0 baris dialog</span>
+                            <button type="button" onclick="toggleRawSrtModal()" class="text-indigo-400 hover:underline flex items-center gap-1">
+                                <i data-lucide="code-2" class="w-3.5 h-3.5"></i> Lihat Kode .SRT
+                            </button>
+                        </div>
+
+                        <div id="rawSrtPreviewBox" class="hidden mt-3 pt-3 border-t border-white/5">
+                            <textarea id="rawSrtTextarea" rows="5" readonly class="w-full bg-[#07080d] border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 focus:outline-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- TAB 2: VS PROMPT PRESETS & GENERATOR                      -->
+        <!-- ========================================================= -->
+        <section id="panelVs" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <div class="lg:col-span-5 flex flex-col gap-4">
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                                <i data-lucide="image" class="w-4 h-4 text-cyan-400"></i>
+                                1. Unggah Gambar Pertandingan
+                            </h2>
+                            <button id="btnReset" type="button" onclick="resetVsApp()" class="hidden text-xs font-medium text-rose-400 bg-rose-500/10 px-2.5 py-1.5 rounded-lg">Ganti</button>
+                        </div>
+
+                        <!-- Preset Gaya Visual Prompt Baru -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5">Preset Gaya Visual Video AI</label>
+                            <select id="promptPresetSelect" onchange="updatePrompt()" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-200 outline-none">
+                                <option value="stadium">Panggung Stadion Futuristis (Default Ino vs Sakura)</option>
+                                <option value="diorama">Diorama 3D Pixel Art (Nuansa Game Klasik)</option>
+                                <option value="ue5">Cinematic Unreal Engine 5 (Realistis & Spektakuler)</option>
+                                <option value="manga">Manga Panel Bergerak (Efek Komik Hidup)</option>
+                            </select>
+                        </div>
+
+                        <div id="dropzone" class="relative group cursor-pointer rounded-xl border-2 border-dashed border-slate-700 hover:border-indigo-500/70 bg-slate-900/50 transition-all overflow-hidden min-h-[240px] flex flex-col items-center justify-center p-4 text-center">
+                            <input type="file" id="fileInput" accept="image/*" class="hidden">
+                            <div id="uploadPlaceholder" class="flex flex-col items-center max-w-xs mx-auto">
+                                <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-3">
+                                    <i data-lucide="upload-cloud" class="w-6 h-6 text-indigo-400"></i>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-200 mb-1">Tarik & lepas foto karakter</p>
+                                <p class="text-xs text-slate-400 mb-3">AI otomatis mendeteksi nama petarung</p>
+                                <span class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold">Pilih Gambar</span>
+                            </div>
+                            <div id="previewContainer" class="hidden w-full h-full flex flex-col items-center justify-center">
+                                <img id="imagePreview" src="" alt="Preview" class="max-h-[300px] w-auto object-contain rounded-lg border border-white/10">
+                            </div>
+                            <div id="aiLoadingOverlay" class="hidden absolute inset-0 bg-[#09090f]/85 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-10">
+                                <div class="w-10 h-10 rounded-full border-2 border-t-cyan-400 border-indigo-500/20 animate-spin mb-2"></div>
+                                <p class="text-xs font-semibold text-white">Mendeteksi Karakter dengan AI...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col gap-5">
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+                                2. Nama Karakter & Pengaturan
+                            </h2>
+                            <span id="detectionBadge" class="hidden text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Terdeteksi AI</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-11 gap-3 items-center mb-4">
+                            <div class="sm:col-span-5">
+                                <input type="text" id="char1Input" value="Ino" oninput="updatePrompt()" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-sm font-semibold text-white outline-none">
+                            </div>
+                            <div class="sm:col-span-1 flex items-center justify-center">
+                                <button type="button" onclick="swapCharacters()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-indigo-600 text-xs font-bold text-indigo-300 hover:text-white flex items-center justify-center">VS</button>
+                            </div>
+                            <div class="sm:col-span-5">
+                                <input type="text" id="char2Input" value="Sakura" oninput="updatePrompt()" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-sm font-semibold text-white outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-white/5">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Rasio Aspek</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="button" id="ratio916" onclick="setAspectRatio('9:16')" class="py-2 rounded-xl text-xs font-semibold border bg-indigo-600/20 border-indigo-500 text-indigo-300">9:16 (TikTok)</button>
+                                    <button type="button" id="ratio169" onclick="setAspectRatio('16:9')" class="py-2 rounded-xl text-xs font-semibold border bg-slate-900 border-slate-700 text-slate-400">16:9 (YouTube)</button>
+                                </div>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="button" onclick="switchTab('videoPrompt')" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-bold text-xs shadow-lg flex items-center justify-center gap-2">
+                                    <i data-lucide="video" class="w-4 h-4"></i> Buka Menu AI Video Prompt
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl neon-glow border-indigo-500/30">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-semibold text-white flex items-center gap-2">
+                                <i data-lucide="terminal" class="w-4 h-4 text-indigo-400"></i>
+                                3. Ringkasan Prompt Cepat
+                            </h2>
+                            <span id="ratioTag" class="text-[11px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">aspect ratio 9:16</span>
+                        </div>
+                        <textarea id="promptOutput" rows="4" readonly class="w-full bg-[#07080d] border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-200 outline-none resize-none"></textarea>
+                        <div class="mt-3 flex justify-end">
+                            <button type="button" id="btnCopy" onclick="copyPrompt()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-xs shadow-lg flex items-center gap-2">
+                                <i id="copyIcon" data-lucide="copy" class="w-4 h-4"></i> <span id="copyText">Salin Prompt</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- TAB 3: AI VIDEO PROMPT GENERATOR (MENU BARU KHUSUS)       -->
+        <!-- ========================================================= -->
+        <section id="panelVideoPrompt" class="hidden space-y-6">
+            <div class="glass-panel rounded-2xl p-5 sm:p-6 shadow-xl border-amber-500/30">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="video" class="w-5 h-5 text-amber-400"></i>
+                            AI Video Prompt Generator &amp; Upload Gambar
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Unggah gambar atau foto duel anime di sini. AI otomatis mendeteksi karakter, meracik dialog, dan menyiapkan prompt video!
+                        </p>
+                    </div>
+                    <button type="button" onclick="generateDialoguePair()" id="btnGenDialogueMain"
+                        class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-bold text-xs shadow-lg flex items-center gap-2 shrink-0 cursor-pointer">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i> Buat Dialog &amp; Kirim ke SRT
+                    </button>
+                </div>
+
+                <!-- Upload Gambar Langsung di Menu AI Video Prompt -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                    <div class="md:col-span-5">
+                        <div id="promptUploadDropzone" class="relative group cursor-pointer rounded-xl border-2 border-dashed border-slate-700 hover:border-amber-500/70 bg-slate-900/50 transition-all overflow-hidden min-h-[180px] flex flex-col items-center justify-center p-4 text-center">
+                            <input type="file" id="promptImageFileInput" accept="image/*" class="hidden">
+                            <div id="promptUploadPlaceholder" class="flex flex-col items-center max-w-xs mx-auto">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-2">
+                                    <i data-lucide="upload-cloud" class="w-5 h-5 text-amber-400"></i>
+                                </div>
+                                <p class="text-xs font-semibold text-slate-200 mb-0.5">Upload Foto Karakter / Duel</p>
+                                <p class="text-[10px] text-slate-400">Klik atau tarik gambar ke sini</p>
+                            </div>
+                            <div id="promptImagePreviewWrapper" class="hidden w-full flex flex-col items-center justify-center">
+                                <img id="promptImagePreview" src="" alt="Preview" class="max-h-[160px] w-auto object-contain rounded-lg border border-white/10">
+                            </div>
+                            <div id="promptAiLoading" class="hidden absolute inset-0 bg-[#09090f]/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 z-10">
+                                <div class="w-6 h-6 rounded-full border-2 border-t-amber-400 border-amber-500/20 animate-spin mb-1"></div>
+                                <p class="text-[11px] font-semibold text-white">Mendeteksi Karakter...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-7 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-3 rounded-xl bg-slate-900/90 border border-white/10 space-y-1">
+                                <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">Karakter Kiri</span>
+                                <input type="text" id="promptChar1Line" class="w-full bg-[#07080d] border border-slate-700 rounded-lg p-2 text-xs text-white outline-none" value="Seranganku sudah tidak sabar mencicipi pertarungan ini.">
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900/90 border border-white/10 space-y-1">
+                                <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">Karakter Kanan</span>
+                                <input type="text" id="promptChar2Line" class="w-full bg-[#07080d] border border-slate-700 rounded-lg p-2 text-xs text-white outline-none" value="Hahaha, jangan sombong dulu! Kami bakal melibas semua seranganmu!">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                            <i data-lucide="terminal" class="w-4 h-4 text-cyan-400"></i> Prompt AI Video Generator (Siap Pakai)
+                        </span>
+                        <span class="text-[11px] font-mono text-cyan-300 px-2 py-0.5 rounded bg-cyan-500/10">Format Full Prompt</span>
+                    </div>
+                    <textarea id="fullVideoPromptOutput" rows="5" readonly class="w-full bg-[#07080d] border border-slate-800 rounded-xl p-3.5 font-mono text-xs text-slate-200 outline-none leading-relaxed"></textarea>
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="copyFullVideoPrompt()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-bold text-xs shadow-lg flex items-center gap-2">
+                            <i data-lucide="copy" class="w-4 h-4"></i> Salin Prompt Video AI
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- TAB 4: JUDUL VIRAL & HOOK                                 -->
+        <!-- ========================================================= -->
+        <section id="panelViral" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <div class="lg:col-span-5 space-y-5">
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                                1. Unggah Gambar / Adegan
+                            </h2>
+                            <button id="btnResetViral" type="button" onclick="resetSharedImage()" class="hidden text-xs font-medium text-rose-400 bg-rose-500/10 px-2.5 py-1.5 rounded-lg">Ganti</button>
+                        </div>
+
+                        <div id="viralDropzone" class="relative group cursor-pointer rounded-xl border-2 border-dashed border-slate-700 hover:border-amber-500/70 bg-slate-900/50 transition-all overflow-hidden min-h-[220px] flex flex-col items-center justify-center p-4 text-center">
+                            <input type="file" id="viralFileInput" accept="image/*" class="hidden">
+                            <div id="viralUploadPlaceholder" class="flex flex-col items-center max-w-xs mx-auto">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-3">
+                                    <i data-lucide="flame" class="w-6 h-6 text-amber-400"></i>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-200 mb-1">Masukkan foto adegan anime</p>
+                                <p class="text-xs text-slate-400 mb-3">AI meracik judul clickbait tinggi otomatis</p>
+                                <span class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 text-xs font-bold shadow-lg">Pilih Foto</span>
+                            </div>
+                            <div id="viralPreviewContainer" class="hidden w-full flex flex-col items-center justify-center">
+                                <img id="viralImagePreview" src="" alt="Preview" class="max-h-[260px] w-auto object-contain rounded-lg border border-white/10">
+                            </div>
+                            <div id="viralLoadingOverlay" class="hidden absolute inset-0 bg-[#09090f]/85 backdrop-blur-sm flex flex-col items-center justify-center p-6 z-10">
+                                <div class="w-10 h-10 rounded-full border-2 border-t-amber-400 border-amber-500/20 animate-spin mb-2"></div>
+                                <p class="text-xs font-semibold text-white">Meracik Judul Viral FYP...</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Gaya Pancingan Penonton</label>
+                                <select id="viralStyleSelect" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none">
+                                    <option value="curiosity">Penasaran & Misteri (Bikin Nonton Sampai Habis)</option>
+                                    <option value="hype">Hype Pertarungan Epik (Aura Dewa / Kekuatan)</option>
+                                    <option value="debate">Debat Komentar & Voting (Tim Kiri vs Kanan)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 space-y-5">
+                    <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-xl neon-glow border-amber-500/25">
+                        <h2 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                            <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> 2. 5 Pilihan Judul Viral FYP
+                        </h2>
+                        <div id="viralTitlesContainer" class="space-y-3">
+                            <div id="viralEmptyState" class="py-10 text-center border border-dashed border-slate-800 rounded-xl bg-slate-900/30">
+                                <p class="text-xs text-slate-400">Unggah foto terlebih dahulu untuk melihat rekomendasi 5 judul viral.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="viralCaptionCard" class="hidden glass-panel rounded-2xl p-4 sm:p-5 shadow-xl space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-semibold text-white">Thumbnail Hook &amp; Hashtag FYP</h3>
+                            <button type="button" onclick="copyFullCaptionPackage()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold">Salin Caption Lengkap</button>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] font-bold text-amber-400 block">Thumbnail Hook</span>
+                                <p id="thumbnailHookText" class="text-sm font-black text-white">SIAPA YANG MENANG?!</p>
+                            </div>
+                        </div>
+                        <textarea id="viralDescriptionOutput" rows="2" class="w-full bg-[#07080d] border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 outline-none"></textarea>
+                        <input type="text" id="viralHashtagsOutput" class="w-full bg-[#07080d] border border-slate-800 rounded-xl px-3 py-2 font-mono text-xs text-cyan-300 outline-none">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-white/5 py-4 text-center text-xs text-slate-500">
+        Anime Creator Studio Pro &bull; Multi-Voice TTS, TikTok Subtitles &amp; VS Prompt Suite
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        const apiKey = "";
+
+        // Event listener untuk upload gambar langsung di Tab AI Video Prompt
+        const promptUploadDropzone = document.getElementById('promptUploadDropzone');
+        const promptImageFileInput = document.getElementById('promptImageFileInput');
+        if (promptUploadDropzone && promptImageFileInput) {
+            promptUploadDropzone.addEventListener('click', () => promptImageFileInput.click());
+            promptImageFileInput.addEventListener('change', (e) => {
+                if (e.target.files?.[0]) handlePromptImageUpload(e.target.files[0]);
+            });
+        }
+
+        async function handlePromptImageUpload(file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const dataUrl = e.target.result;
+                document.getElementById('promptImagePreview').src = dataUrl;
+                document.getElementById('promptUploadPlaceholder').classList.add('hidden');
+                document.getElementById('promptImagePreviewWrapper').classList.remove('hidden');
+
+                const parts = dataUrl.split(',');
+                const mime = parts[0].match(/:(.*?);/)[1];
+                const base64 = parts[1];
+
+                document.getElementById('promptAiLoading').classList.remove('hidden');
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                try {
+                    const res = await fetchWithRetry(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ role: "user", parts: [{ text: "Identifikasi dua karakter utama dalam gambar ini (character1 dan character2) serta buatkan 2 baris dialog pra-pertandingan yang seru dan saling sindir (line1 dan line2) dalam Bahasa Indonesia." }, { inlineData: { mimeType: mime, data: base64 } }] }],
+                            generationConfig: {
+                                responseMimeType: "application/json",
+                                responseSchema: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        character1: { type: "STRING" },
+                                        character2: { type: "STRING" },
+                                        line1: { type: "STRING" },
+                                        line2: { type: "STRING" }
+                                    },
+                                    required: ["character1", "character2", "line1", "line2"]
+                                }
+                            }
+                        })
+                    });
+
+                    const parsed = JSON.parse(res?.candidates?.[0]?.content?.parts?.[0]?.text);
+                    if (parsed.character1) document.getElementById('char1Input').value = parsed.character1;
+                    if (parsed.character2) document.getElementById('char2Input').value = parsed.character2;
+                    if (parsed.line1) document.getElementById('promptChar1Line').value = parsed.line1;
+                    if (parsed.line2) document.getElementById('promptChar2Line').value = parsed.line2;
+
+                    updatePrompt();
+                    showStatus(`Berhasil mendeteksi ${parsed.character1} vs ${parsed.character2} dari gambar!`, 'success');
+                } catch (err) {
+                    showStatus('Gagal membaca gambar dengan AI, menggunakan dialog default.', 'error');
+                } finally {
+                    document.getElementById('promptAiLoading').classList.add('hidden');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function switchTab(tabName) {
+            ['Dub', 'Vs', 'VideoPrompt', 'Viral'].forEach(t => {
+                const p = document.getElementById(`panel${t}`);
+                const b = document.getElementById(`tabBtn${t}`);
+                if (p) p.classList.add('hidden');
+                if (b) b.className = 'px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white whitespace-nowrap';
+            });
+            const activePanel = document.getElementById(`panel${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+            const activeBtn = document.getElementById(`tabBtn${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+            if (activePanel) activePanel.classList.remove('hidden');
+            if (activeBtn) activeBtn.className = 'px-2.5 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md whitespace-nowrap';
+            hideStatus();
+            lucide.createIcons();
+        }
+
+        const statusBanner = document.getElementById('statusBanner');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusText = document.getElementById('statusText');
+
+        function showStatus(message, type = 'info') {
+            if (!statusBanner) return;
+            statusText.textContent = message;
+            statusBanner.className = `mb-6 rounded-xl p-3.5 text-sm flex items-center justify-between gap-3 border ${type === 'success' ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-200' : type === 'error' ? 'bg-rose-500/15 border-rose-500/30 text-rose-200' : 'bg-indigo-500/15 border-indigo-500/30 text-indigo-200'}`;
+            statusIcon.setAttribute('data-lucide', type === 'success' ? 'check-circle-2' : type === 'error' ? 'alert-circle' : 'info');
+            lucide.createIcons();
+            statusBanner.classList.remove('hidden');
+        }
+        function hideStatus() { if (statusBanner) statusBanner.classList.add('hidden'); }
+
+        // State Tab 1
+        let currentVideoBase64 = null, currentVideoMimeType = null, currentVideoObjectUrl = null;
+        let subtitlesData = [];
+
+        const videoDropzone = document.getElementById('videoDropzone');
+        const videoFileInput = document.getElementById('videoFileInput');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const btnTranslateVideo = document.getElementById('btnTranslateVideo');
+        const btnResetVideo = document.getElementById('btnResetVideo');
+
+        videoDropzone.addEventListener('click', () => videoFileInput.click());
+        videoFileInput.addEventListener('change', (e) => { if (e.target.files?.[0]) handleVideoFile(e.target.files[0]); });
+
+        function handleVideoFile(file) {
+            if (!file.type.startsWith('video/')) { showStatus('Format video tidak valid.', 'error'); return; }
+            if (currentVideoObjectUrl) URL.revokeObjectURL(currentVideoObjectUrl);
+            currentVideoObjectUrl = URL.createObjectURL(file);
+            videoPlayer.src = currentVideoObjectUrl;
+            document.getElementById('videoFileName').textContent = file.name;
+            document.getElementById('videoUploadPlaceholder').classList.add('hidden');
+            document.getElementById('videoPreviewWrapper').classList.remove('hidden');
+            btnResetVideo.classList.remove('hidden');
+            btnTranslateVideo.disabled = false;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const parts = e.target.result.split(',');
+                currentVideoMimeType = file.type || 'video/mp4';
+                currentVideoBase64 = parts[1];
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetVideoWorkspace() {
+            videoFileInput.value = '';
+            if (currentVideoObjectUrl) URL.revokeObjectURL(currentVideoObjectUrl);
+            videoPlayer.src = '';
+            currentVideoBase64 = null;
+            document.getElementById('videoUploadPlaceholder').classList.remove('hidden');
+            document.getElementById('videoPreviewWrapper').classList.add('hidden');
+            btnResetVideo.classList.add('hidden');
+            btnTranslateVideo.disabled = true;
+        }
+
+        async function processVideoTranslation() {
+            if (!currentVideoBase64) return;
+            const progressBox = document.getElementById('videoProgressBox');
+            const progressStep = document.getElementById('videoProgressStep');
+            btnTranslateVideo.disabled = true;
+            progressBox.classList.remove('hidden');
+            progressStep.textContent = 'Menganalisis audio & video dengan AI...';
+
+            const defaultVoice = document.getElementById('defaultVoiceSelect').value;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const promptText = `Analisis video anime ini. Dengarkan dialog Jepang dan buat subtitle SRT. Setiap baris wajib menyertakan: start, end, jp, id, dan tentukan voice (pilih salah satu dari: Fenrir, Puck, Zephyr, Kore).`;
+
+            try {
+                const result = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: promptText }, { inlineData: { mimeType: currentVideoMimeType, data: currentVideoBase64 } }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        start: { type: "STRING" },
+                                        end: { type: "STRING" },
+                                        jp: { type: "STRING" },
+                                        id: { type: "STRING" },
+                                        voice: { type: "STRING" }
+                                    },
+                                    required: ["start", "end", "jp", "id"]
+                                }
+                            }
+                        }
+                    })
+                });
+
+                const rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                const parsed = JSON.parse(rawJson);
+                subtitlesData = parsed.map(item => ({
+                    start: item.start || '00:00:00,000',
+                    end: item.end || '00:00:03,000',
+                    jp: item.jp || '',
+                    id: item.id || '',
+                    voice: item.voice || defaultVoice
+                }));
+
+                renderSubtitlesEditor();
+                showStatus(`Berhasil menerjemahkan ${subtitlesData.length} baris dengan Multi-Voice AI!`, 'success');
+            } catch (err) {
+                showStatus(`Gagal memproses video: ${err.message}`, 'error');
+            } finally {
+                btnTranslateVideo.disabled = false;
+                progressBox.classList.add('hidden');
+            }
+        }
+
+        function loadSampleSubtitles() {
+            subtitlesData = [
+                { start: '00:00:00,500', end: '00:00:03,000', jp: 'いくぞ！', id: 'Ayo maju! Mulai dari sini pertarungan sesungguhnya!', voice: 'Puck' },
+                { start: '00:00:03,500', end: '00:00:06,500', jp: '負けない！', id: 'Aku tidak akan pernah kalah!', voice: 'Zephyr' }
+            ];
+            renderSubtitlesEditor();
+            showStatus('Contoh subtitle multi-voice dimuat!', 'info');
+        }
+
+        function updateSubPreviewStyle() {
+            const style = document.getElementById('subStyleVisual').value;
+            const previewText = document.getElementById('liveSubtitleText');
+            if (style === 'tiktok') {
+                previewText.className = 'tiktok-subtitle-preview text-lg sm:text-xl font-black text-amber-300 tracking-wide mt-3 px-4';
+            } else if (style === 'cyan') {
+                previewText.className = 'tiktok-subtitle-preview text-lg sm:text-xl font-black text-cyan-300 tracking-wide mt-3 px-4';
+            } else {
+                previewText.className = 'tiktok-subtitle-preview text-lg sm:text-xl font-black text-white tracking-wide mt-3 px-4';
+            }
+        }
+
+        function renderSubtitlesEditor() {
+            const container = document.getElementById('subtitleListContainer');
+            const emptyState = document.getElementById('subtitleEmptyState');
+            if (subtitlesData.length === 0) {
+                container.innerHTML = ''; container.appendChild(emptyState);
+                document.getElementById('btnDownloadSrt').disabled = true;
+                document.getElementById('btnGenerateFullDub').disabled = true;
+                return;
+            }
+            document.getElementById('btnDownloadSrt').disabled = false;
+            document.getElementById('btnGenerateFullDub').disabled = false;
+            document.getElementById('subtitleCountLabel').textContent = `${subtitlesData.length} baris`;
+
+            container.innerHTML = subtitlesData.map((item, idx) => `
+                <div class="p-3.5 rounded-xl bg-slate-900/80 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-indigo-300 font-bold">Baris #${idx + 1}</span>
+                        <div class="flex items-center gap-2">
+                            <select onchange="subtitlesData[${idx}].voice = this.value" class="bg-slate-800 text-[11px] text-purple-300 border border-purple-500/30 rounded px-2 py-0.5 outline-none">
+                                <option value="Fenrir" ${item.voice==='Fenrir'?'selected':''}>Fenrir</option>
+                                <option value="Puck" ${item.voice==='Puck'?'selected':''}>Puck</option>
+                                <option value="Zephyr" ${item.voice==='Zephyr'?'selected':''}>Zephyr</option>
+                                <option value="Kore" ${item.voice==='Kore'?'selected':''}>Kore</option>
+                            </select>
+                            <button type="button" onclick="generateSingleLineDub(${idx})" class="text-[11px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded hover:bg-purple-500/30">Dub Baris</button>
+                            <button type="button" onclick="subtitlesData.splice(${idx},1); renderSubtitlesEditor();" class="text-slate-500 hover:text-rose-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                    <textarea rows="2" oninput="subtitlesData[${idx}].id = this.value; document.getElementById('liveSubtitleText').textContent = '" + this.value.replace(/'/g, "\\'") + "';" class="w-full bg-[#07080d] border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">${escapeHtml(item.id)}</textarea>
+                </div>
+            `).join('');
+            lucide.createIcons();
+            updateRawSrtPreview();
+        }
+
+        function escapeHtml(str) { return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+        function addSubtitleBlock() { subtitlesData.push({ start: '00:00:00,000', end: '00:00:03,000', jp: '', id: 'Dialog baru...', voice: 'Zephyr' }); renderSubtitlesEditor(); }
+        
+        function updateRawSrtPreview() {
+            const srtText = subtitlesData.map((item, idx) => `${idx + 1}\n${item.start} --> ${item.end}\n${item.id}`).join('\n\n') + '\n';
+            document.getElementById('rawSrtTextarea').value = srtText;
+        }
+        function toggleRawSrtModal() { document.getElementById('rawSrtPreviewBox').classList.toggle('hidden'); }
+        function downloadSrtFile() {
+            const blob = new Blob([document.getElementById('rawSrtTextarea').value], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'anime_multivoice_ID.srt'; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function generateFullDubbingAudio() {
+            const combined = subtitlesData.map(s => s.id).join('. ');
+            await synthesizeIndonesianSpeech(combined, 'Dubbing Lengkap', 'Zephyr');
+        }
+        async function generateSingleLineDub(idx) {
+            const item = subtitlesData[idx];
+            await synthesizeIndonesianSpeech(item.id, `Baris #${idx+1}`, item.voice);
+        }
+
+        async function synthesizeIndonesianSpeech(text, label, voiceName) {
+            const ttsLoadingBox = document.getElementById('ttsLoadingBox');
+            ttsLoadingBox.classList.remove('hidden');
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+            try {
+                const res = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Bacakan dengan ekspresif: "${text}"` }] }],
+                        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceName } } } }
+                    })
+                });
+                const part = res?.candidates?.[0]?.content?.parts?.[0];
+                const audioBase64 = part?.inlineData?.data;
+                const sampleRate = 24000;
+                const pcmBytes = base64ToArrayBuffer(audioBase64);
+                const wavBlob = pcm16ToWavBlob(new Int16Array(pcmBytes), sampleRate);
+
+                const url = URL.createObjectURL(wavBlob);
+                document.getElementById('dubAudioPlayer').src = url;
+                document.getElementById('btnDownloadAudio').href = url;
+                document.getElementById('dubAudioResultBox').classList.remove('hidden');
+                showStatus(`Suara dubbing (${label}) berhasil dibuat!`, 'success');
+            } catch (e) {
+                showStatus(`Gagal TTS: ${e.message}`, 'error');
+            } finally {
+                ttsLoadingBox.classList.add('hidden');
+            }
+        }
+
+        function base64ToArrayBuffer(b64) {
+            const bin = atob(b64), len = bin.length, bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+            return bytes.buffer;
+        }
+        function pcm16ToWavBlob(pcm16, sampleRate) {
+            const dataSize = pcm16.length * 2, buffer = new ArrayBuffer(44 + dataSize), view = new DataView(buffer);
+            function writeStr(off, str) { for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i)); }
+            writeStr(0, 'RIFF'); view.setUint32(4, 36 + dataSize, true); writeStr(8, 'WAVE');
+            writeStr(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+            writeStr(36, 'data'); view.setUint32(40, dataSize, true);
+            let off = 44; for (let i = 0; i < pcm16.length; i++, off += 2) view.setInt16(off, pcm16[i], true);
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        // Tab 2 & 3 State
+        let currentAspectRatio = '9:16', currentImageBase64 = null, currentImageMimeType = null, generatedViralData = null;
+        const dropzone = document.getElementById('dropzone'), fileInput = document.getElementById('fileInput');
+        const viralDropzone = document.getElementById('viralDropzone'), viralFileInput = document.getElementById('viralFileInput');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => { if (e.target.files?.[0]) handleSharedImage(e.target.files[0]); });
+        viralDropzone.addEventListener('click', () => viralFileInput.click());
+        viralFileInput.addEventListener('change', (e) => { if (e.target.files?.[0]) handleSharedImage(e.target.files[0]); });
+
+        function handleSharedImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+                document.getElementById('imagePreview').src = dataUrl;
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('previewContainer').classList.remove('hidden');
+                document.getElementById('btnReset').classList.remove('hidden');
+
+                document.getElementById('viralImagePreview').src = dataUrl;
+                document.getElementById('viralUploadPlaceholder').classList.add('hidden');
+                document.getElementById('viralPreviewContainer').classList.remove('hidden');
+                document.getElementById('btnResetViral').classList.remove('hidden');
+
+                const parts = dataUrl.split(',');
+                currentImageMimeType = parts[0].match(/:(.*?);/)[1];
+                currentImageBase64 = parts[1];
+
+                analyzeImage(currentImageBase64, currentImageMimeType);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetVsApp() {
+            fileInput.value = ''; viralFileInput.value = '';
+            currentImageBase64 = null;
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('previewContainer').classList.add('hidden');
+            document.getElementById('btnReset').classList.add('hidden');
+            document.getElementById('viralUploadPlaceholder').classList.remove('hidden');
+            document.getElementById('viralPreviewContainer').classList.add('hidden');
+            document.getElementById('btnResetViral').classList.add('hidden');
+        }
+
+        function updatePrompt() {
+            const c1 = document.getElementById('char1Input').value || 'Karakter 1';
+            const c2 = document.getElementById('char2Input').value || 'Karakter 2';
+            const line1 = document.getElementById('promptChar1Line').value;
+            const line2 = document.getElementById('promptChar2Line').value;
+            const preset = document.getElementById('promptPresetSelect').value;
+            let visualDesc = 'massive glowing futuristic stage with a cheering stadium crowd in the background';
+            if (preset === 'diorama') visualDesc = 'intricate 3D diorama pixel art game stage with retro neon arcade lights';
+            if (preset === 'ue5') visualDesc = 'cinematic Unreal Engine 5 hyper-realistic battle arena with dramatic particle effects';
+            if (preset === 'manga') visualDesc = 'dynamic black and white manga panel style with ink splash effects';
+
+            const fullPrompt = `An anime fighting game screen featuring ${c1} on the left and ${c2} on the right with a large "VS" in the center, cinematic camera zoom and dramatic lighting. ${c1} speaks first with natural mouth movements, delivering the line: "${line1}". Then, ${c2} responds by speaking with natural mouth movements, delivering the line: "${line2}". Vibrant anime art style, 4k, smooth motion --ar ${currentAspectRatio}`;
+            
+            document.getElementById('promptOutput').value = fullPrompt;
+            document.getElementById('fullVideoPromptOutput').value = fullPrompt;
+            document.getElementById('ratioTag').textContent = `aspect ratio ${currentAspectRatio}`;
+        }
+
+        function setAspectRatio(r) {
+            currentAspectRatio = r;
+            document.getElementById('ratio916').className = r === '9:16' ? 'py-2 rounded-xl text-xs font-semibold border bg-indigo-600/25 border-indigo-500 text-indigo-300' : 'py-2 rounded-xl text-xs font-semibold border bg-slate-900 border-slate-700 text-slate-400';
+            document.getElementById('ratio169').className = r === '16:9' ? 'py-2 rounded-xl text-xs font-semibold border bg-indigo-600/25 border-indigo-500 text-indigo-300' : 'py-2 rounded-xl text-xs font-semibold border bg-slate-900 border-slate-700 text-slate-400';
+            updatePrompt();
+        }
+
+        function copyFullVideoPrompt() {
+            const el = document.getElementById('fullVideoPromptOutput');
+            el.select(); document.execCommand('copy');
+            showStatus('Prompt Video AI berhasil disalin!', 'success');
+        }
+
+        async function analyzeImage(base64, mime) {
+            document.getElementById('aiLoadingOverlay').classList.remove('hidden');
+            document.getElementById('viralLoadingOverlay').classList.remove('hidden');
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            try {
+                const res = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: "Identifikasi dua karakter utama dalam gambar ini (character1 dan character2) serta buatkan 5 judul viral YouTube Shorts/TikTok Bahasa Indonesia beserta thumbnailHook, description, dan hashtags." }, { inlineData: { mimeType: mime, data: base64 } }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    character1: { type: "STRING" },
+                                    character2: { type: "STRING" },
+                                    titles: { type: "ARRAY", items: { type: "OBJECT", properties: { title: { type: "STRING" }, ctrScore: { type: "INTEGER" } }, required: ["title", "ctrScore"] } },
+                                    thumbnailHook: { type: "STRING" },
+                                    description: { type: "STRING" },
+                                    hashtags: { type: "STRING" }
+                                },
+                                required: ["character1", "character2", "titles", "thumbnailHook", "description", "hashtags"]
+                            }
+                        }
+                    })
+                });
+
+                const parsed = JSON.parse(res?.candidates?.[0]?.content?.parts?.[0]?.text);
+                if (parsed.character1) document.getElementById('char1Input').value = parsed.character1;
+                if (parsed.character2) document.getElementById('char2Input').value = parsed.character2;
+                updatePrompt();
+                document.getElementById('detectionBadge').classList.remove('hidden');
+
+                generatedViralData = parsed;
+                renderViralTitles(parsed.titles);
+                document.getElementById('thumbnailHookText').textContent = parsed.thumbnailHook;
+                document.getElementById('viralDescriptionOutput').value = parsed.description;
+                document.getElementById('viralHashtagsOutput').value = parsed.hashtags;
+                document.getElementById('viralCaptionCard').classList.remove('hidden');
+                showStatus('Karakter & Judul Viral berhasil di-generate otomatis!', 'success');
+            } catch (e) {
+                showStatus(`Gagal analisis gambar: ${e.message}`, 'error');
+            } finally {
+                document.getElementById('aiLoadingOverlay').classList.add('hidden');
+                document.getElementById('viralLoadingOverlay').classList.add('hidden');
+            }
+        }
+
+        function renderViralTitles(titles) {
+            const container = document.getElementById('viralTitlesContainer');
+            container.innerHTML = titles.map((t, i) => `
+                <div class="p-3 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-between gap-3">
+                    <div>
+                        <span class="text-[10px] text-amber-400 font-bold">#${i+1} (CTR: ${t.ctrScore}%)</span>
+                        <p class="text-xs font-bold text-white mt-0.5">${escapeHtml(t.title)}</p>
+                    </div>
+                    <button type="button" onclick="copyTextValue('${escapeHtml(t.title)}', 'Judul')" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs shrink-0">Salin</button>
+                </div>
+            `).join('');
+        }
+
+        function copyTextValue(text, label) {
+            const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+            showStatus(`${label} disalin!`, 'success');
+        }
+
+        function copyFullCaptionPackage() {
+            const desc = document.getElementById('viralDescriptionOutput').value;
+            const tags = document.getElementById('viralHashtagsOutput').value;
+            copyTextValue(`${desc}\n\n${tags}`, 'Caption Lengkap');
+        }
+
+        // Fungsi Generator Dialog Pra-Pertandingan Otomatis
+        async function generateDialoguePair() {
+            const c1 = document.getElementById('char1Input').value || 'Karakter 1';
+            const c2 = document.getElementById('char2Input').value || 'Karakter 2';
+            const btn = document.getElementById('btnGenDialogueMain');
+            if(btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<div class="w-4 h-4 rounded-full border-2 border-t-slate-950 border-slate-900/20 animate-spin"></div> Meracik Dialog...`;
+            }
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const promptText = `Buatlah 2 baris dialog pra-pertandingan yang seru, khas anime (saling sindir atau bersemangat) antara ${c1} (Kiri) dan ${c2} (Kanan). Berikan teks bahasa Indonesia yang natural. Format JSON dengan kunci: line1 dan line2.`;
+
+            try {
+                const res = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: "user", parts: [{ text: promptText }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    line1: { type: "STRING" },
+                                    line2: { type: "STRING" }
+                                },
+                                required: ["line1", "line2"]
+                            }
+                        }
+                    })
+                });
+
+                const parsed = JSON.parse(res?.candidates?.[0]?.content?.parts?.[0]?.text);
+                if(parsed.line1) document.getElementById('promptChar1Line').value = parsed.line1;
+                if(parsed.line2) document.getElementById('promptChar2Line').value = parsed.line2;
+                updatePrompt();
+
+                // Masukkan ke dalam Subtitle Editor (Tab 1)
+                subtitlesData = [
+                    { start: '00:00:00,000', end: '00:00:03,500', jp: `${c1} dialog`, id: parsed.line1, voice: 'Fenrir' },
+                    { start: '00:00:04,000', end: '00:00:07,500', jp: `${c2} dialog`, id: parsed.line2, voice: 'Zephyr' }
+                ];
+
+                renderSubtitlesEditor();
+                switchTab('dub');
+                showStatus(`Dialog pra-pertandingan ${c1} vs ${c2} berhasil dikirim ke Studio Dub & SRT!`, 'success');
+            } catch (e) {
+                // Fallback offline jika gagal
+                const l1 = `Seranganku sudah tidak sabar mencicipi pertarungan ini. Kau tidak akan bisa menang, ${c2}.`;
+                const l2 = `Hahaha, jangan sombong dulu ${c1}! Bersama kekuatan penuh, kami bakal melibas semua seranganmu dengan mudah!`;
+                document.getElementById('promptChar1Line').value = l1;
+                document.getElementById('promptChar2Line').value = l2;
+                updatePrompt();
+
+                subtitlesData = [
+                    { start: '00:00:00,000', end: '00:00:03,500', jp: '', id: l1, voice: 'Fenrir' },
+                    { start: '00:00:04,000', end: '00:00:07,500', jp: '', id: l2, voice: 'Zephyr' }
+                ];
+                renderSubtitlesEditor();
+                switchTab('dub');
+                showStatus('Dialog cadangan berhasil dimuat ke SRT!', 'success');
+            } finally {
+                if(btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i> Buat Dialog &amp; Kirim ke SRT`;
+                }
+                lucide.createIcons();
+            }
+        }
+
+        async function fetchWithRetry(url, options, maxRetries = 3) {
+            let delay = 1000;
+            for (let i = 0; i <= maxRetries; i++) {
+                try {
+                    const res = await fetch(url, options);
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data?.error?.message || `HTTP ${res.status}`);
+                    return data;
+                } catch (err) {
+                    if (i === maxRetries) throw err;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        updatePrompt();
+    </script>
+</body>
+</html>
